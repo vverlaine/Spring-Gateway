@@ -8,6 +8,11 @@ spring:
            uri: lb://MICROSERVICIO
            predicates:
              - Path=/pelicula/**
+           filters:
+             - name: CircuitBreaker
+               args:
+                 name: microservicio
+                 fallbackuri: forward:/peliculaFallBack
 server:
   port: 8989
 eureka:
@@ -17,3 +22,16 @@ eureka:
   instance:
     preferIpAddress: true
 
+managment:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
